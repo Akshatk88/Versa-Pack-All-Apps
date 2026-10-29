@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "1001030655759",
+    "project_id": "versapack-a920f",
+    "storage_bucket": "versapack-a920f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001030655759:android:4d00a92ed0382a86dbe87a",
+        "android_client_info": {
+          "package_name": "com.versapack.delivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2HZ2TUbXUCgAu55_gp7gLuN298MawI0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001030655759:android:a6cb76ffbecc6993dbe87a",
+        "android_client_info": {
+          "package_name": "com.versapack.seller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2HZ2TUbXUCgAu55_gp7gLuN298MawI0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001030655759:android:ece657adb44539b1dbe87a",
+        "android_client_info": {
+          "package_name": "com.versapack.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2HZ2TUbXUCgAu55_gp7gLuN298MawI0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

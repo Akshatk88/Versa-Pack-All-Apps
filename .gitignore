@@ -1,0 +1,47 @@
+# Root ignores for the Versa Pack monorepo (each app keeps its own .gitignore too)
+
+# Flutter / Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/build/
+**/.pub-cache/
+**/.pub/
+**/coverage/
+**/ios/Flutter/ephemeral/
+**/macos/Flutter/ephemeral/
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+**/ios/Flutter/.last_build_id
+app.*.symbols
+app.*.map.json
+
+# Android
+**/android/local.properties
+**/android/key.properties
+**/android/.gradle/
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/android/.cxx/
+*.jks
+*.keystore
+*.hprof
+**/android/gradle-*-all.zip
+**/android/gradle-*-bin.zip
+
+# Secrets
+**/config/keys.env
+**/ios/Flutter/Keys.xcconfig
+.env
+.env.*
+
+# IDE / OS / local tooling
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+*.log
+**/.claude/settings.local.json
+temp_*.bat

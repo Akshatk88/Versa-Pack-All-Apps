@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Suvio Quick (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      // Supplies MAPS_API_KEY and API_BASE_URL to the Dart side. Without it the
+      // map still draws (the SDK reads its own native key from the manifest),
+      // but Places search and reverse geocoding return nothing.
+      "toolArgs": ["--dart-define-from-file=config/keys.env"]
+    },
+    {
+      "name": "Suvio Quick (profile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "toolArgs": ["--dart-define-from-file=config/keys.env"]
+    },
+    {
+      "name": "Suvio Quick (release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "toolArgs": ["--dart-define-from-file=config/keys.env"]
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The app is useless offline; every screen reads from the backend. The
+         debug manifest declares this too, but release builds do not inherit it. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- New-order alerts. Android 13+ will not show a notification without it;
+         firebase_messaging merges it in too, but a seller-facing alert this
+         central should be visible in the app's own manifest. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- High-priority order prompt: the full-screen-intent fallback that puts the
+         order over the lock screen, and the brief wake lock that lights the
+         screen when the overlay goes up on an idle phone. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- The new-order ringtone loops from a foreground service. Nothing else can
+         keep sounding while the app is backgrounded or killed: the Dart isolate
+         is not running, and a notification channel plays its sound exactly once. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+
+    <!-- Store location during onboarding. Coarse is declared alongside fine so
+         a seller who grants only approximate location still gets a usable pin
+         they can drag, rather than a hard failure. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- Picking registration documents from the gallery. Android 13 split the
+         old storage permission per media type; the legacy one is kept with a
+         maxSdkVersion so older devices still work. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+
+    <application
+        android:label="Versapack Seller"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+
+        <!-- Fixes Mali GPU Vulkan Impeller crash on Redmi/Xiaomi devices -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
+        <!-- Deliberately no android:taskAffinity="". An empty affinity puts the
+             activity in a task of its own, so the notification's launch intent
+             starts a second task instead of resuming the app — which on
+             OxygenOS reads as the tap doing nothing at all. -->
+        <activity
+            android:name="com.versapack.seller.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <!-- Required by firebase_messaging: without it a tapped notification
+                 launches the app but never reaches onMessageOpenedApp /
+                 getInitialMessage, so the app opens on the home screen instead
+                 of the order. -->
+            <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <!-- Sees the push before Flutter does, so the ringtone can start while
+             the app is backgrounded or killed. It always delegates to super, so
+             the tray notification and the Dart handlers are unaffected. -->
+        <service
+            android:name="com.versapack.seller.SellerMessagingService"
+            android:exported="false">
+            <intent-filter android:priority="1">
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.versapack.seller.NewOrderAlarmService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"/>
+
+        <!-- Google Maps SDK. The value is substituted by Gradle from
+             gradle.properties (MAPS_API_KEY) — never hardcode the key here. -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+        <!-- Fallback channel for any push whose channel the device does not
+             have. It must be the ordinary-sound channel, never new_order_channel:
+             pointing it at the ringtone channel made every notification the app
+             did not explicitly route — order cancelled, order claimed, payouts —
+             play the new-order ringtone. Both channels are created in
+             MainActivity.onCreate. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
+
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>
